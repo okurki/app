@@ -2,8 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Explanation on why the microphone access is needed.</string>
+	<!-- <key>NSMicrophoneUsageDescription</key>
+	<string>Explanation on why the microphone access is needed.</string> -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We use gallery to allow user pick an existing picture</string>
 	<key>NSCameraUsageDescription</key>
 	<string>We use camera for taking user's picture for classification</string>
 	<key>CFBundleDevelopmentRegion</key>
