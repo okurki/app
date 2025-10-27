@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:okurki_app/features/classification/domain/repo/classification_repo.dart';
+import 'package:okurki_app/features/classification/domain/repo/image_picker_repo.dart';
+import 'package:okurki_app/features/classification/presentation/state/classify_cubit.dart';
 
 import 'package:okurki_app/features/classification/presentation/state/image_picking_cubit.dart';
 import 'package:okurki_app/service_locator.dart';
@@ -14,8 +17,19 @@ class ClassifyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ImagePickingCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => ImagePickingCubit(
+            repo: getIt<ImagePickerRepo>(),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => ClassifyCubit(
+            repo: getIt<ClassificationRepo>(),
+          ),
+        ),
+      ],
       child: const CupertinoPageScaffold(
         child: CustomScrollView(
           slivers: [
@@ -46,21 +60,11 @@ class _PictureContainer extends StatelessWidget {
   Widget _buildPlaceholder(BuildContext context) {
     return CupertinoButton(
       padding: EdgeInsets.zero,
-      onPressed: () async {
-        final picker = getIt<ImagePicker>();
-        final picture = await picker.pickImage(
-          source: ImageSource.camera,
-        );
-        if (!context.mounted) return;
-        context.read<ImagePickingCubit>().pickPicture(picture);
+      onPressed: () {
+        unawaited(context.read<ImagePickingCubit>().pickPictureCamera());
       },
       onLongPress: () async {
-        final picker = getIt<ImagePicker>();
-        final picture = await picker.pickImage(
-          source: ImageSource.gallery,
-        );
-        if (!context.mounted) return;
-        context.read<ImagePickingCubit>().pickPicture(picture);
+        unawaited(context.read<ImagePickingCubit>().pickPictureGallery());
       },
       child: Container(
         width: double.infinity,
@@ -273,37 +277,15 @@ class _ActionButtons extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           child: CupertinoButton.filled(
-            onPressed: () async {
-              // no-op for async image waiting stage to avoid races.
-              if (s is ImagePickingStatePicked &&
-                  s.imageStatus == ImageLoadingStatus.imageLoading) {
-                return;
-              }
-
-              final picker = getIt<ImagePicker>();
-              final picture = await picker.pickImage(
-                source: ImageSource.camera,
-              );
-              if (!context.mounted) return;
-              context.read<ImagePickingCubit>().pickPicture(picture);
+            onPressed: () {
+              unawaited(context.read<ImagePickingCubit>().pickPictureCamera());
             },
             child: const Text('Take a photo'),
           ),
         ),
         CupertinoButton(
           onPressed: () async {
-            // no-op for async image waiting stage to avoid races.
-            if (s is ImagePickingStatePicked &&
-                s.imageStatus == ImageLoadingStatus.imageLoading) {
-              return;
-            }
-
-            final picker = getIt<ImagePicker>();
-            final picture = await picker.pickImage(
-              source: ImageSource.gallery,
-            );
-            if (!context.mounted) return;
-            context.read<ImagePickingCubit>().pickPicture(picture);
+            unawaited(context.read<ImagePickingCubit>().pickPictureGallery());
           },
           child: const Text('Choose from library'),
         ),
