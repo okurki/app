@@ -54,4 +54,10 @@ class ImagePickingCubit extends Cubit<ImagePickingState> {
   void removePickedPicture() {
     emit(const ImagePickingState.idle());
   }
+
+  /// Safe to use in async gaps.
+  void reset() {
+    if (isClosed) return;
+    emit(const ImagePickingState.idle());
+  }
 }

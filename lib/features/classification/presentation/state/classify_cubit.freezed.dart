@@ -125,12 +125,12 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  idle,TResult Function()?  loading,TResult Function( ClassifyResult value)?  success,TResult Function( Object error,  StackTrace? st)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  idle,TResult Function( XFile image)?  loading,TResult Function( XFile image,  ClassifyResult value)?  success,TResult Function( Object error,  StackTrace? st)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ClassifyStateIdle() when idle != null:
 return idle();case _ClassifyStateLoading() when loading != null:
-return loading();case _ClassifyStateSuccess() when success != null:
-return success(_that.value);case _ClassifyStateError() when error != null:
+return loading(_that.image);case _ClassifyStateSuccess() when success != null:
+return success(_that.image,_that.value);case _ClassifyStateError() when error != null:
 return error(_that.error,_that.st);case _:
   return orElse();
 
@@ -149,12 +149,12 @@ return error(_that.error,_that.st);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  idle,required TResult Function()  loading,required TResult Function( ClassifyResult value)  success,required TResult Function( Object error,  StackTrace? st)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  idle,required TResult Function( XFile image)  loading,required TResult Function( XFile image,  ClassifyResult value)  success,required TResult Function( Object error,  StackTrace? st)  error,}) {final _that = this;
 switch (_that) {
 case _ClassifyStateIdle():
 return idle();case _ClassifyStateLoading():
-return loading();case _ClassifyStateSuccess():
-return success(_that.value);case _ClassifyStateError():
+return loading(_that.image);case _ClassifyStateSuccess():
+return success(_that.image,_that.value);case _ClassifyStateError():
 return error(_that.error,_that.st);}
 }
 /// A variant of `when` that fallback to returning `null`
@@ -169,12 +169,12 @@ return error(_that.error,_that.st);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  idle,TResult? Function()?  loading,TResult? Function( ClassifyResult value)?  success,TResult? Function( Object error,  StackTrace? st)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  idle,TResult? Function( XFile image)?  loading,TResult? Function( XFile image,  ClassifyResult value)?  success,TResult? Function( Object error,  StackTrace? st)?  error,}) {final _that = this;
 switch (_that) {
 case _ClassifyStateIdle() when idle != null:
 return idle();case _ClassifyStateLoading() when loading != null:
-return loading();case _ClassifyStateSuccess() when success != null:
-return success(_that.value);case _ClassifyStateError() when error != null:
+return loading(_that.image);case _ClassifyStateSuccess() when success != null:
+return success(_that.image,_that.value);case _ClassifyStateError() when error != null:
 return error(_that.error,_that.st);case _:
   return null;
 
@@ -219,41 +219,76 @@ String toString() {
 
 
 class _ClassifyStateLoading implements ClassifyState {
-  const _ClassifyStateLoading();
+  const _ClassifyStateLoading({required this.image});
   
 
+ final  XFile image;
 
-
+/// Create a copy of ClassifyState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ClassifyStateLoadingCopyWith<_ClassifyStateLoading> get copyWith => __$ClassifyStateLoadingCopyWithImpl<_ClassifyStateLoading>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClassifyStateLoading);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClassifyStateLoading&&(identical(other.image, image) || other.image == image));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode => Object.hash(runtimeType,image);
 
 @override
 String toString() {
-  return 'ClassifyState.loading()';
+  return 'ClassifyState.loading(image: $image)';
 }
 
 
 }
 
+/// @nodoc
+abstract mixin class _$ClassifyStateLoadingCopyWith<$Res> implements $ClassifyStateCopyWith<$Res> {
+  factory _$ClassifyStateLoadingCopyWith(_ClassifyStateLoading value, $Res Function(_ClassifyStateLoading) _then) = __$ClassifyStateLoadingCopyWithImpl;
+@useResult
+$Res call({
+ XFile image
+});
 
 
+
+
+}
+/// @nodoc
+class __$ClassifyStateLoadingCopyWithImpl<$Res>
+    implements _$ClassifyStateLoadingCopyWith<$Res> {
+  __$ClassifyStateLoadingCopyWithImpl(this._self, this._then);
+
+  final _ClassifyStateLoading _self;
+  final $Res Function(_ClassifyStateLoading) _then;
+
+/// Create a copy of ClassifyState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? image = null,}) {
+  return _then(_ClassifyStateLoading(
+image: null == image ? _self.image : image // ignore: cast_nullable_to_non_nullable
+as XFile,
+  ));
+}
+
+
+}
 
 /// @nodoc
 
 
 class _ClassifyStateSuccess implements ClassifyState {
-  const _ClassifyStateSuccess({required this.value});
+  const _ClassifyStateSuccess({required this.image, required this.value});
   
 
+ final  XFile image;
  final  ClassifyResult value;
 
 /// Create a copy of ClassifyState
@@ -266,16 +301,16 @@ _$ClassifyStateSuccessCopyWith<_ClassifyStateSuccess> get copyWith => __$Classif
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClassifyStateSuccess&&(identical(other.value, value) || other.value == value));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClassifyStateSuccess&&(identical(other.image, image) || other.image == image)&&(identical(other.value, value) || other.value == value));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,value);
+int get hashCode => Object.hash(runtimeType,image,value);
 
 @override
 String toString() {
-  return 'ClassifyState.success(value: $value)';
+  return 'ClassifyState.success(image: $image, value: $value)';
 }
 
 
@@ -286,7 +321,7 @@ abstract mixin class _$ClassifyStateSuccessCopyWith<$Res> implements $ClassifySt
   factory _$ClassifyStateSuccessCopyWith(_ClassifyStateSuccess value, $Res Function(_ClassifyStateSuccess) _then) = __$ClassifyStateSuccessCopyWithImpl;
 @useResult
 $Res call({
- ClassifyResult value
+ XFile image, ClassifyResult value
 });
 
 
@@ -303,9 +338,10 @@ class __$ClassifyStateSuccessCopyWithImpl<$Res>
 
 /// Create a copy of ClassifyState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? value = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? image = null,Object? value = null,}) {
   return _then(_ClassifyStateSuccess(
-value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
+image: null == image ? _self.image : image // ignore: cast_nullable_to_non_nullable
+as XFile,value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
 as ClassifyResult,
   ));
 }

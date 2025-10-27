@@ -1,44 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:okurki_app/features/classification/presentation/state/classify_cubit.dart';
+import 'package:okurki_app/features/classification/presentation/state/image_picking_cubit.dart';
 import 'package:okurki_app/features/classification/presentation/ui/classify_screen.dart';
 import 'package:okurki_app/features/classification/presentation/ui/results_screen.dart';
 import 'package:okurki_app/features/home/presentation/home.dart';
+import 'package:okurki_app/service_locator.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
-
-// final x = [
-//   // The route branch for the first tab of the bottom navigation bar.
-//   StatefulShellBranch(
-//     navigatorKey: _sectionANavigatorKey,
-//     routes: <RouteBase>[
-//       GoRoute(
-//         // The screen to display as the root in the first tab of the
-//         // bottom navigation bar.
-//         path: '/a',
-//         builder: (BuildContext context, GoRouterState state) =>
-//             const RootScreen(label: 'A', detailsPath: '/a/details'),
-//         routes: <RouteBase>[
-//           // The details screen to display stacked on navigator of the
-//           // first tab. This will cover screen A but not the application
-//           // shell (bottom navigation bar).
-//           GoRoute(
-//             path: 'details',
-//             builder: (BuildContext context, GoRouterState state) =>
-//                 const DetailsScreen(label: 'A'),
-//           ),
-//         ],
-//       ),
-//     ],
-//     // To enable preloading of the initial locations of branches, pass
-//     // 'true' for the parameter `preload` (false is default).
-//   ),
-// ];
 
 final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/rate',
+  observers: [HeroController()],
   routes: [
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
@@ -47,15 +24,37 @@ final router = GoRouter(
       branches: [
         StatefulShellBranch(
           routes: [
-            GoRoute(
-              path: '/rate',
-              builder: (context, state) {
-                return const ClassifyScreen();
+            ShellRoute(
+              builder: (context, state, child) {
+                return MultiBlocProvider(
+                  providers: [
+                    BlocProvider(create: (_) => getIt<ImagePickingCubit>()),
+                    BlocProvider(create: (_) => getIt<ClassifyCubit>()),
+                  ],
+                  child: child,
+                );
               },
               routes: [
                 GoRoute(
-                  path: 'results',
-                  builder: (context, state) => const ResultsScreen(),
+                  path: '/rate',
+                  builder: (context, state) => const ClassifyScreen(),
+                  routes: [
+                    GoRoute(
+                      path: 'results',
+                      pageBuilder: (_, _) {
+                        return CustomTransitionPage(
+                          transitionDuration: const Duration(milliseconds: 400),
+                          reverseTransitionDuration: const Duration(
+                            milliseconds: 400,
+                          ),
+                          transitionsBuilder: (context, anim, _, child) {
+                            return FadeTransition(opacity: anim, child: child);
+                          },
+                          child: const ResultsScreen(),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),

@@ -3,8 +3,11 @@ part of 'classify_cubit.dart';
 @freezed
 sealed class ClassifyState with _$ClassifyState {
   const factory ClassifyState.idle() = _ClassifyStateIdle;
-  const factory ClassifyState.loading() = _ClassifyStateLoading;
+  const factory ClassifyState.loading({
+    required XFile image,
+  }) = _ClassifyStateLoading;
   const factory ClassifyState.success({
+    required XFile image,
     required ClassifyResult value,
   }) = _ClassifyStateSuccess;
   const factory ClassifyState.error(

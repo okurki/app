@@ -3,12 +3,10 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:okurki_app/features/classification/domain/repo/classification_repo.dart';
-import 'package:okurki_app/features/classification/domain/repo/image_picker_repo.dart';
-import 'package:okurki_app/features/classification/presentation/state/classify_cubit.dart';
+import 'package:go_router/go_router.dart';
 
+import 'package:okurki_app/features/classification/presentation/state/classify_cubit.dart';
 import 'package:okurki_app/features/classification/presentation/state/image_picking_cubit.dart';
-import 'package:okurki_app/service_locator.dart';
 
 const _kFadingDuration = Duration(milliseconds: 400);
 
@@ -17,19 +15,20 @@ class ClassifyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => ImagePickingCubit(
-            repo: getIt<ImagePickerRepo>(),
-          ),
-        ),
-        BlocProvider(
-          create: (context) => ClassifyCubit(
-            repo: getIt<ClassificationRepo>(),
-          ),
-        ),
-      ],
+    return BlocListener<ClassifyCubit, ClassifyState>(
+      listener: (context, state) async {
+        await state.mapOrNull(
+          success: (value) async {
+            // Navigate.
+            await context.push('/rate/results');
+    
+            // Reset blocs.
+            if (!context.mounted) return;
+            context.read<ClassifyCubit>().reset();
+            context.read<ImagePickingCubit>().reset();
+          },
+        );
+      },
       child: const CupertinoPageScaffold(
         child: CustomScrollView(
           slivers: [
@@ -58,39 +57,42 @@ class _PictureContainer extends StatelessWidget {
   const _PictureContainer();
 
   Widget _buildPlaceholder(BuildContext context) {
-    return CupertinoButton(
-      padding: EdgeInsets.zero,
-      onPressed: () {
-        unawaited(context.read<ImagePickingCubit>().pickPictureCamera());
-      },
-      onLongPress: () async {
-        unawaited(context.read<ImagePickingCubit>().pickPictureGallery());
-      },
-      child: Container(
-        width: double.infinity,
-        color: CupertinoDynamicColor.resolve(
-          const CupertinoDynamicColor.withBrightness(
-            color: CupertinoColors.lightBackgroundGray,
-            darkColor: CupertinoColors.darkBackgroundGray,
+    return Hero(
+      tag: 'Pizdec',
+      child: CupertinoButton(
+        padding: EdgeInsets.zero,
+        onPressed: () {
+          unawaited(context.read<ImagePickingCubit>().pickPictureCamera());
+        },
+        onLongPress: () async {
+          unawaited(context.read<ImagePickingCubit>().pickPictureGallery());
+        },
+        child: Container(
+          width: double.infinity,
+          color: CupertinoDynamicColor.resolve(
+            const CupertinoDynamicColor.withBrightness(
+              color: CupertinoColors.lightBackgroundGray,
+              darkColor: CupertinoColors.darkBackgroundGray,
+            ),
+            context,
           ),
-          context,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 8,
-          children: [
-            const Icon(
-              CupertinoIcons.camera_fill,
-              color: CupertinoColors.inactiveGray,
-              size: 82,
-            ),
-            Text(
-              'Add a photo to rate',
-              style: CupertinoTheme.of(
-                context,
-              ).textTheme.tabLabelTextStyle.copyWith(fontSize: 20),
-            ),
-          ],
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 8,
+            children: [
+              const Icon(
+                CupertinoIcons.camera_fill,
+                color: CupertinoColors.inactiveGray,
+                size: 82,
+              ),
+              Text(
+                'Add a photo to rate',
+                style: CupertinoTheme.of(
+                  context,
+                ).textTheme.tabLabelTextStyle.copyWith(fontSize: 20),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -247,50 +249,69 @@ class _ActionButtons extends StatelessWidget {
   const _ActionButtons();
 
   Widget _buildFor(BuildContext context, ImagePickingState state) {
-    final s = state;
-    if (s is ImagePickingStatePicked &&
-        s.imageStatus == ImageLoadingStatus.imageLoaded) {
-      return Column(
-        key: const ValueKey('Ready'),
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        spacing: 8,
+    return switch (state) {
+      ImagePickingStatePicked(:final imageStatus, :final pickedFile)
+          when imageStatus == ImageLoadingStatus.imageLoaded =>
+        Column(
+          key: const ValueKey('Ready'),
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: 8,
+          children: [
+            BlocBuilder<ClassifyCubit, ClassifyState>(
+              builder: (context, state) {
+                return state.maybeWhen(
+                  loading: (_) => CupertinoButton.filled(
+                    onPressed: () {},
+                    child: const CupertinoActivityIndicator(
+                      color: CupertinoColors.white,
+                    ),
+                  ),
+                  orElse: () => CupertinoButton.filled(
+                    onPressed: () {
+                      unawaited(
+                        context.read<ClassifyCubit>().classify(pickedFile),
+                      );
+                    },
+                    child: const Text('Send'),
+                  ),
+                );
+              },
+            ),
+            Center(
+              child: Text(
+                'Pictures are processed securely',
+                style: CupertinoTheme.of(
+                  context,
+                ).textTheme.tabLabelTextStyle.copyWith(fontSize: 14),
+              ),
+            ),
+          ],
+        ),
+      _ => Column(
+        key: const ValueKey('idle'),
         children: [
-          CupertinoButton.filled(
-            onPressed: () {},
-            child: const Text('Send'),
-          ),
-          Center(
-            child: Text(
-              'Pictures are processed securely',
-              style: CupertinoTheme.of(
-                context,
-              ).textTheme.tabLabelTextStyle.copyWith(fontSize: 14),
+          SizedBox(
+            width: double.infinity,
+            child: CupertinoButton.filled(
+              onPressed: () {
+                unawaited(
+                  context.read<ImagePickingCubit>().pickPictureCamera(),
+                );
+              },
+              child: const Text('Take a photo'),
             ),
           ),
-        ],
-      );
-    }
-
-    return Column(
-      key: const ValueKey('idle'),
-      children: [
-        SizedBox(
-          width: double.infinity,
-          child: CupertinoButton.filled(
-            onPressed: () {
-              unawaited(context.read<ImagePickingCubit>().pickPictureCamera());
+          CupertinoButton(
+            onPressed: () async {
+              unawaited(
+                context.read<ImagePickingCubit>().pickPictureGallery(),
+              );
             },
-            child: const Text('Take a photo'),
+            child: const Text('Choose from library'),
           ),
-        ),
-        CupertinoButton(
-          onPressed: () async {
-            unawaited(context.read<ImagePickingCubit>().pickPictureGallery());
-          },
-          child: const Text('Choose from library'),
-        ),
-      ],
-    );
+        ],
+      ),
+    };
   }
 
   @override

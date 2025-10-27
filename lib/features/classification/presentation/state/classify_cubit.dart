@@ -15,13 +15,26 @@ class ClassifyCubit extends Cubit<ClassifyState> {
 
   final ClassificationRepo _classificationRepo;
 
+  @override
+  void onChange(Change<ClassifyState> change) {
+    super.onChange(change);
+    print(change);
+  }
+
   Future<void> classify(XFile picture) async {
-    emit(const ClassifyState.loading());
+    if (state is! _ClassifyStateIdle) return;
+    emit(ClassifyState.loading(image: picture));
     try {
       final classifyResult = await _classificationRepo.classify(picture);
-      emit(ClassifyState.success(value: classifyResult));
+      emit(ClassifyState.success(value: classifyResult, image: picture));
     } on Exception catch (e, st) {
       emit(ClassifyState.error(e, st));
     }
+  }
+
+  /// Safe to use in async gaps.
+  void reset() {
+    if (isClosed) return;
+    emit(const ClassifyState.idle());
   }
 }
