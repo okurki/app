@@ -18,7 +18,7 @@ class ClassifyCubit extends Cubit<ClassifyState> {
   @override
   void onChange(Change<ClassifyState> change) {
     super.onChange(change);
-    print(change);
+    // print(change);
   }
 
   Future<void> classify(XFile picture) async {

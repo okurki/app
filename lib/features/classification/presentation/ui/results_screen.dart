@@ -5,45 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:okurki_app/features/classification/presentation/state/classify_cubit.dart';
 
-class FadingHero extends StatelessWidget {
-  const FadingHero({super.key, required this.tag, required this.child});
-
-  final Object tag;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Hero(
-      tag: tag,
-      // transitionOnUserGestures: true,
-      // Straight-line morph to match iOS feel:
-      createRectTween: (a, b) => RectTween(begin: a, end: b),
-      flightShuttleBuilder: (flightCtx, animation, direction, fromCtx, toCtx) {
-        final fromHero = fromCtx.widget as Hero;
-        final toHero   = toCtx.widget as Hero;
-
-        // Preserve inherited themes (text styles, dynamic colors) during flight.
-        return InheritedTheme.captureAll(
-          fromCtx,
-          AnimatedBuilder(
-            animation: animation,
-            builder: (_, _) {
-              return Stack(
-                fit: StackFit.expand,
-                children: [
-                  Opacity(opacity: animation.value,     child: toHero.child),
-                  Opacity(opacity: 1 - animation.value, child: fromHero.child),
-                ],
-              );
-            },
-          ),
-        );
-      },
-      child: child,
-    );
-  }
-}
-
 class ResultsScreen extends StatelessWidget {
   const ResultsScreen({super.key});
 
@@ -65,7 +26,6 @@ class ResultsScreen extends StatelessWidget {
                   CustomScrollView(
                     slivers: [
                       const CupertinoSliverNavigationBar(
-                        // transitionBetweenRoutes: false,
                         automaticallyImplyLeading: false,
                         largeTitle: Padding(
                           padding: EdgeInsetsGeometry.only(right: 16),
@@ -141,11 +101,7 @@ class ResultsScreen extends StatelessWidget {
                               color: CupertinoColors.activeBlue,
                             ),
                           ),
-                          onPressed: () {
-                            // Reset previous page bloc.
-                            // context.read<ImagePickingCubit>().reset();
-                            context.pop();
-                          },
+                          onPressed: () => context.pop(),
                         ),
                       ),
                     ),

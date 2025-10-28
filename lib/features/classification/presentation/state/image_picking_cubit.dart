@@ -16,7 +16,7 @@ class ImagePickingCubit extends Cubit<ImagePickingState> {
   @override
   void onChange(Change<ImagePickingState> change) {
     super.onChange(change);
-    print(change);
+    // print(change);
   }
 
   Future<void> pickPictureCamera() async {

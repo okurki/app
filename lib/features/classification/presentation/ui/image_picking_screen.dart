@@ -16,9 +16,13 @@ class ImagePickingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<ClassifyCubit, ClassifyState>(
+      listenWhen: (previous, current) {
+        final shouldNavigate = !previous.isSuccess && current.isSuccess;
+        return shouldNavigate;
+      },
       listener: (context, state) async {
         await state.mapOrNull(
-          success: (value) async {
+          success: (_) async {
             // Navigate.
             await context.push('/rate/results');
 
@@ -58,7 +62,7 @@ class _PictureContainer extends StatelessWidget {
 
   Widget _buildPlaceholder(
     BuildContext context, {
-    required bool shouldConstrain,
+    required bool needsConstraints,
   }) {
     final child = CupertinoButton(
       padding: EdgeInsets.zero,
@@ -104,8 +108,8 @@ class _PictureContainer extends StatelessWidget {
       ),
     );
 
-    if (!shouldConstrain) return child;
-
+    if (!needsConstraints) return child;
+ 
     return AspectRatio(
       aspectRatio: 5 / 6,
       child: Padding(
@@ -124,7 +128,7 @@ class _PictureContainer extends StatelessWidget {
       child: BlocBuilder<ImagePickingCubit, ImagePickingState>(
         builder: (context, state) {
           return state.when(
-            idle: () => _buildPlaceholder(context, shouldConstrain: true),
+            idle: () => _buildPlaceholder(context, needsConstraints: true),
             imagePicked: (pickedFile, status) => AspectRatio(
               aspectRatio: 5 / 6,
               child: Padding(
@@ -136,7 +140,7 @@ class _PictureContainer extends StatelessWidget {
                   fit: StackFit.passthrough,
                   children: [
                     if (status != ImageLoadingStatus.imageLoaded)
-                      _buildPlaceholder(context, shouldConstrain: false),
+                      _buildPlaceholder(context, needsConstraints: false),
                     Hero(
                       tag: 'Penis',
                       child: ClipRRect(
@@ -267,71 +271,70 @@ class _ActionButtons extends StatelessWidget {
   const _ActionButtons();
 
   Widget _buildFor(BuildContext context, ImagePickingState state) {
-    return switch (state) {
-      ImagePickingStatePicked(:final imageStatus, :final pickedFile)
-          when imageStatus == ImageLoadingStatus.imageLoaded =>
-        Column(
-          key: const ValueKey('Ready'),
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          spacing: 8,
-          children: [
-            BlocBuilder<ClassifyCubit, ClassifyState>(
-              builder: (context, state) {
-                return state.maybeWhen(
-                  loading: (_) => CupertinoButton.filled(
-                    onPressed: () {},
-                    child: const CupertinoActivityIndicator(
-                      color: CupertinoColors.white,
-                    ),
+    if (state case ImagePickingStatePicked(
+      :final imageStatus,
+      :final pickedFile,
+    ) when imageStatus == ImageLoadingStatus.imageLoaded) {
+      return Column(
+        key: const ValueKey('Ready'),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: 8,
+        children: [
+          BlocBuilder<ClassifyCubit, ClassifyState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                loading: (_) => CupertinoButton.filled(
+                  onPressed: () {},
+                  child: const CupertinoActivityIndicator(
+                    color: CupertinoColors.white,
                   ),
-                  success: (image, value) {
-                    // This trick allows smooth animation for hero.
-                    return Hero(
-                      tag: 'Pizda',
-                      child: CupertinoButton.filled(
-                        color: CupertinoDynamicColor.resolve(
-                          const CupertinoDynamicColor.withBrightness(
-                            color: CupertinoColors.extraLightBackgroundGray,
-                            darkColor: CupertinoColors.darkBackgroundGray,
-                          ),
-                          context,
+                ),
+                success: (image, value) {
+                  // This trick allows smooth animation for hero.
+                  return Hero(
+                    tag: 'Pizda',
+                    child: CupertinoButton.filled(
+                      color: CupertinoDynamicColor.resolve(
+                        const CupertinoDynamicColor.withBrightness(
+                          color: CupertinoColors.extraLightBackgroundGray,
+                          darkColor: CupertinoColors.darkBackgroundGray,
                         ),
-                        child: Text(
-                          'New photo',
-                          style: const TextStyle().copyWith(
-                            color: CupertinoColors.activeBlue,
-                          ),
-                        ),
-                        onPressed: () {},
+                        context,
                       ),
+                      child: Text(
+                        'New photo',
+                        style: const TextStyle().copyWith(
+                          color: CupertinoColors.activeBlue,
+                        ),
+                      ),
+                      onPressed: () {},
+                    ),
+                  );
+                },
+                orElse: () => CupertinoButton.filled(
+                  onPressed: () async {
+                    await context.read<ClassifyCubit>().classify(
+                      pickedFile,
                     );
                   },
-                  orElse: () => CupertinoButton.filled(
-                    onPressed: () async {
-                      await context.read<ClassifyCubit>().classify(
-                        pickedFile,
-                      );
+                  child: const Text('Send'),
+                ),
+              );
+            },
+          ),
+          Center(
+            child: Text(
+              'Pictures are processed securely',
+              style: CupertinoTheme.of(
+                context,
+              ).textTheme.tabLabelTextStyle.copyWith(fontSize: 14),
+            ),
+          ),
+        ],
+      );
+    }
 
-                      // Since we leave the page, clear the bloc.
-                      // if (!context.mounted) return;
-                      // context.read<ImagePickingCubit>().reset();
-                    },
-                    child: const Text('Send'),
-                  ),
-                );
-              },
-            ),
-            Center(
-              child: Text(
-                'Pictures are processed securely',
-                style: CupertinoTheme.of(
-                  context,
-                ).textTheme.tabLabelTextStyle.copyWith(fontSize: 14),
-              ),
-            ),
-          ],
-        ),
-      _ => Column(
+    return Column(
         key: const ValueKey('idle'),
         children: [
           SizedBox(
@@ -357,15 +360,12 @@ class _ActionButtons extends StatelessWidget {
             child: const Text('Choose from library'),
           ),
         ],
-      ),
-    };
+      );
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ImagePickingCubit, ImagePickingState>(
-      // Any state change'd reflect.
-      buildWhen: (a, b) => true,
       builder: (context, state) {
         return SliverToBoxAdapter(
           child: Container(
