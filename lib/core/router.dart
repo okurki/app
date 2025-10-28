@@ -2,13 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:okurki_app/core/service_locator.dart';
 import 'package:okurki_app/features/classification/presentation/state/classify_cubit.dart';
 import 'package:okurki_app/features/classification/presentation/state/image_picking_cubit.dart';
-import 'package:okurki_app/features/classification/presentation/ui/classify_screen.dart';
+import 'package:okurki_app/features/classification/presentation/ui/image_picking_screen.dart';
 import 'package:okurki_app/features/classification/presentation/ui/results_screen.dart';
 import 'package:okurki_app/features/home/presentation/home.dart';
-import 'package:okurki_app/service_locator.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -37,11 +36,12 @@ final router = GoRouter(
               routes: [
                 GoRoute(
                   path: '/rate',
-                  builder: (context, state) => const ClassifyScreen(),
+                  builder: (context, state) => const ImagePickingScreen(),
                   routes: [
                     GoRoute(
                       path: 'results',
                       pageBuilder: (_, _) {
+                        // return const CupertinoPage(child: ResultsScreen());
                         return CustomTransitionPage(
                           transitionDuration: const Duration(milliseconds: 400),
                           reverseTransitionDuration: const Duration(

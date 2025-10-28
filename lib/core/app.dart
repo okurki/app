@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:okurki_app/router.dart';
+import 'package:okurki_app/core/router.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
