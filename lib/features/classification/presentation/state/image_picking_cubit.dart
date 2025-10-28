@@ -13,6 +13,12 @@ class ImagePickingCubit extends Cubit<ImagePickingState> {
 
   final ImagePickerRepo _pickerRepo;
 
+  @override
+  void onChange(Change<ImagePickingState> change) {
+    super.onChange(change);
+    print(change);
+  }
+
   Future<void> pickPictureCamera() async {
     // Avoid races.
     if (state case ImagePickingStatePicked(

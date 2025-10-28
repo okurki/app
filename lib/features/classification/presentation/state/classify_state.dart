@@ -15,3 +15,7 @@ sealed class ClassifyState with _$ClassifyState {
     StackTrace? st,
   ]) = _ClassifyStateError;
 }
+
+extension ClassifyStateX on ClassifyState {
+  bool get isSuccess => this is _ClassifyStateSuccess;
+}
