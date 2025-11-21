@@ -1,0 +1,70 @@
+name: Mobile CI/CD Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Sanity Check Environment'
+        default: 'lint'
+
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.35.4'
+          architecture: x64
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze code
+        run: flutter analyze
+
+  compile-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.38.0'
+          architecture: x64
+
+      - name: Accept Android licenses
+        run: yes | sdkmanager --licenses
+
+      - name: Get deps
+        run: flutter pub get
+
+      - name: Build debug APK (no signing)
+        run: flutter build apk --debug
+
+      # also verify Gradle side to catch plugin/buildSrc failures
+      - name: Assemble via Gradle
+        working-directory: android
+        run: ./gradlew :app:assembleDebug --no-daemon
