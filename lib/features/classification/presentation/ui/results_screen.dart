@@ -1,12 +1,34 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:okurki_app/features/classification/presentation/state/classify_cubit.dart';
+import 'package:okurki_app/features/classification/presentation/ui/classify_screen.dart';
+import 'package:okurki_app/features/classification/presentation/ui/similar_people_screen.dart';
 
-class ResultsScreen extends StatelessWidget {
+const int _kPagesAmount = 2;
+
+class ResultsScreen extends StatefulWidget {
   const ResultsScreen({super.key});
+
+  @override
+  State<ResultsScreen> createState() => _ResultsScreenState();
+}
+
+class _ResultsScreenState extends State<ResultsScreen> {
+  late final PageController _pageController;
+  int currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: currentPage);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,87 +45,58 @@ class ResultsScreen extends StatelessWidget {
             return CupertinoPageScaffold(
               child: Stack(
                 children: [
-                  CustomScrollView(
-                    slivers: [
-                      const CupertinoSliverNavigationBar(
-                        automaticallyImplyLeading: false,
-                        largeTitle: Padding(
-                          padding: EdgeInsetsGeometry.only(right: 16),
-                          child: Center(child: Text('Result')),
+                  PageView(
+                    onPageChanged: (value) {
+                      setState(() => currentPage = value);
+                    },
+                    controller: _pageController,
+                    children: [
+                      ClassifyScreen(imagePath: image.path),
+                      SimilarPeopleScreen(),
+                    ],
+                  ),
+                  Positioned(
+                    bottom: 32,
+                    left: 0,
+                    right: 0,
+                    child: Column(
+                      children: [
+                        CurrentPageHighlighter(
+                          currentPage: currentPage,
+                          pagesAmount: _kPagesAmount,
                         ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: Container(
-                          margin: const EdgeInsetsGeometry.fromLTRB(
-                            32,
-                            6,
-                            32,
-                            0,
-                          ),
-                          child: Hero(
-                            tag: 'Penis',
-                            child: AspectRatio(
-                              aspectRatio: 5 / 6,
-                              child: ClipRRect(
-                                borderRadius: BorderRadiusGeometry.circular(12),
-                                child: Image.file(
-                                  File(image.path),
-                                  key: ValueKey(image.path),
-                                  fit: BoxFit.cover,
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          width: double.infinity,
+                          child: Padding(
+                            padding: const EdgeInsetsGeometry.symmetric(
+                              horizontal: 16,
+                            ),
+                            child: Hero(
+                              tag: 'Pizda',
+                              child: CupertinoButton.filled(
+                                color: CupertinoDynamicColor.resolve(
+                                  const CupertinoDynamicColor.withBrightness(
+                                    color: CupertinoColors.extraLightBackgroundGray,
+                                    darkColor: CupertinoColors.darkBackgroundGray,
+                                  ),
+                                  context,
                                 ),
+                                child: Text(
+                                  'New photo',
+                                  style: const TextStyle().copyWith(
+                                    color: CupertinoColors.activeBlue,
+                                  ),
+                                ),
+                                onPressed: () {
+                                  context.read<ClassifyCubit>().reset();
+                                  context.pop();
+                                },
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsetsGeometry.symmetric(
-                            horizontal: 32,
-                            vertical: 16,
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Pretty Fucking Good',
-                              style:
-                                  CupertinoTheme.of(
-                                    context,
-                                  ).textTheme.navLargeTitleTextStyle.copyWith(
-                                    fontSize: 18,
-                                  ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Positioned(
-                    bottom: 48,
-                    left: 0,
-                    right: 0,
-                    child: Padding(
-                      padding: const EdgeInsetsGeometry.symmetric(
-                        horizontal: 16,
-                      ),
-                      child: Hero(
-                        tag: 'Pizda',
-                        child: CupertinoButton.filled(
-                          color: CupertinoDynamicColor.resolve(
-                            const CupertinoDynamicColor.withBrightness(
-                              color: CupertinoColors.extraLightBackgroundGray,
-                              darkColor: CupertinoColors.darkBackgroundGray,
-                            ),
-                            context,
-                          ),
-                          child: Text(
-                            'New photo',
-                            style: const TextStyle().copyWith(
-                              color: CupertinoColors.activeBlue,
-                            ),
-                          ),
-                          onPressed: () => context.pop(),
-                        ),
-                      ),
+                      ],
                     ),
                   ),
                 ],
@@ -116,7 +109,10 @@ class ResultsScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Something wrong happened'),
+                    Text(
+                      'Something wrong happened',
+                      style: CupertinoTheme.of(context).textTheme.textStyle,
+                    ),
                     CupertinoButton(
                       child: const Text('Try again'),
                       onPressed: () => context.pop(),
@@ -128,6 +124,42 @@ class ResultsScreen extends StatelessWidget {
           },
         );
       },
+    );
+  }
+}
+
+class CurrentPageHighlighter extends StatelessWidget {
+  const CurrentPageHighlighter({required this.currentPage, required this.pagesAmount, super.key});
+
+  final int currentPage;
+  final int pagesAmount;
+
+  BoxDecoration _decorationForActive() {
+    return BoxDecoration(
+      color: CupertinoColors.activeBlue,
+      borderRadius: BorderRadius.circular(100),
+    );
+  }
+
+  BoxDecoration _decorationDefault(BuildContext context) {
+    return BoxDecoration(
+      color: CupertinoDynamicColor.resolve(CupertinoColors.lightBackgroundGray, context),
+      borderRadius: BorderRadius.circular(100),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      spacing: 4,
+      mainAxisAlignment: .center,
+      children: List.generate(pagesAmount, (index) {
+        return Container(
+          width: 16,
+          height: 16,
+          decoration: index == currentPage ? _decorationForActive() : _decorationDefault(context),
+        );
+      }),
     );
   }
 }
