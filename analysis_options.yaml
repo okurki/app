@@ -21,3 +21,4 @@ linter:
     omit_local_variable_types: false
     flutter_style_todos: false
     public_member_api_docs: false
+    lines_longer_than_80_chars: false
