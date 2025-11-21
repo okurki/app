@@ -109,7 +109,7 @@ class _PictureContainer extends StatelessWidget {
     );
 
     if (!needsConstraints) return child;
- 
+
     return AspectRatio(
       aspectRatio: 5 / 6,
       child: Padding(
@@ -139,8 +139,7 @@ class _PictureContainer extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.passthrough,
                   children: [
-                    if (status != ImageLoadingStatus.imageLoaded)
-                      _buildPlaceholder(context, needsConstraints: false),
+                    if (status != ImageLoadingStatus.imageLoaded) _buildPlaceholder(context, needsConstraints: false),
                     Hero(
                       tag: 'Penis',
                       child: ClipRRect(
@@ -154,9 +153,7 @@ class _PictureContainer extends StatelessWidget {
                             final loaded = frame != null;
                             if (loaded) {
                               WidgetsBinding.instance.addPostFrameCallback((_) {
-                                context
-                                    .read<ImagePickingCubit>()
-                                    .notifyPictureWasLoaded();
+                                context.read<ImagePickingCubit>().notifyPictureWasLoaded();
                               });
                             }
                             // Happy-path.
@@ -169,12 +166,10 @@ class _PictureContainer extends StatelessWidget {
                           errorBuilder: (context, error, stackTrace) {
                             // We notify about error here and draw
                             WidgetsBinding.instance.addPostFrameCallback((_) {
-                              context
-                                  .read<ImagePickingCubit>()
-                                  .notifyPictureError(
-                                    error,
-                                    stackTrace,
-                                  );
+                              context.read<ImagePickingCubit>().notifyPictureError(
+                                error,
+                                stackTrace,
+                              );
                             });
                             // Sad-path.
                             return TweenAnimationBuilder(
@@ -186,10 +181,8 @@ class _PictureContainer extends StatelessWidget {
                                   child: ColoredBox(
                                     color: CupertinoDynamicColor.resolve(
                                       const CupertinoDynamicColor.withBrightness(
-                                        color:
-                                            CupertinoColors.lightBackgroundGray,
-                                        darkColor:
-                                            CupertinoColors.darkBackgroundGray,
+                                        color: CupertinoColors.lightBackgroundGray,
+                                        darkColor: CupertinoColors.darkBackgroundGray,
                                       ),
                                       context,
                                     ),
@@ -335,32 +328,32 @@ class _ActionButtons extends StatelessWidget {
     }
 
     return Column(
-        key: const ValueKey('idle'),
-        children: [
-          SizedBox(
-            width: double.infinity,
-            child: Hero(
-              tag: 'Pizda',
-              child: CupertinoButton.filled(
-                onPressed: () {
-                  unawaited(
-                    context.read<ImagePickingCubit>().pickPictureCamera(),
-                  );
-                },
-                child: const Text('Take a photo'),
-              ),
+      key: const ValueKey('idle'),
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: Hero(
+            tag: 'Pizda',
+            child: CupertinoButton.filled(
+              onPressed: () {
+                unawaited(
+                  context.read<ImagePickingCubit>().pickPictureCamera(),
+                );
+              },
+              child: const Text('Take a photo'),
             ),
           ),
-          CupertinoButton(
-            onPressed: () async {
-              unawaited(
-                context.read<ImagePickingCubit>().pickPictureGallery(),
-              );
-            },
-            child: const Text('Choose from library'),
-          ),
-        ],
-      );
+        ),
+        CupertinoButton(
+          onPressed: () async {
+            unawaited(
+              context.read<ImagePickingCubit>().pickPictureGallery(),
+            );
+          },
+          child: const Text('Choose from library'),
+        ),
+      ],
+    );
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:okurki_app/core/logger.dart';
 import 'package:okurki_app/features/classification/domain/repo/image_picker_repo.dart';
 
 part 'image_picking_state.dart';
@@ -29,6 +30,7 @@ class ImagePickingCubit extends Cubit<ImagePickingState> {
 
     final file = await _pickerRepo.pickImageCamera();
     if (file == null) return;
+    logger.t('Picked file: ${file.path}');
     emit(ImagePickingState.imagePicked(pickedFile: file));
   }
 
@@ -42,6 +44,7 @@ class ImagePickingCubit extends Cubit<ImagePickingState> {
 
     final file = await _pickerRepo.pickImageGallery();
     if (file == null) return;
+    logger.t('Picked file: ${file.path}');
     emit(ImagePickingState.imagePicked(pickedFile: file));
   }
 
