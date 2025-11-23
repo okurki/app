@@ -5,7 +5,7 @@ part 'classify_result.g.dart';
 
 @freezed
 abstract class ClassifyResult with _$ClassifyResult {
-  const factory ClassifyResult({required int prediction}) = _ClassifyResult;
+  const factory ClassifyResult({required double prediction}) = _ClassifyResult;
 
   factory ClassifyResult.fromJson(Map<String, dynamic> json) =>
       _$ClassifyResultFromJson(json);

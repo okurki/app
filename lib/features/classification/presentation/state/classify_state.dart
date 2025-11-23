@@ -9,6 +9,7 @@ sealed class ClassifyState with _$ClassifyState {
   const factory ClassifyState.success({
     required XFile image,
     required ClassifyResult value,
+    required List<SimilarPerson> similarPeople,
   }) = _ClassifyStateSuccess;
   const factory ClassifyState.error(
     Object error, [

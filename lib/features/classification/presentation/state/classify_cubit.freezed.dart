@@ -125,12 +125,12 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  idle,TResult Function( XFile image)?  loading,TResult Function( XFile image,  ClassifyResult value)?  success,TResult Function( Object error,  StackTrace? st)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  idle,TResult Function( XFile image)?  loading,TResult Function( XFile image,  ClassifyResult value,  List<SimilarPerson> similarPeople)?  success,TResult Function( Object error,  StackTrace? st)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ClassifyStateIdle() when idle != null:
 return idle();case _ClassifyStateLoading() when loading != null:
 return loading(_that.image);case _ClassifyStateSuccess() when success != null:
-return success(_that.image,_that.value);case _ClassifyStateError() when error != null:
+return success(_that.image,_that.value,_that.similarPeople);case _ClassifyStateError() when error != null:
 return error(_that.error,_that.st);case _:
   return orElse();
 
@@ -149,12 +149,12 @@ return error(_that.error,_that.st);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  idle,required TResult Function( XFile image)  loading,required TResult Function( XFile image,  ClassifyResult value)  success,required TResult Function( Object error,  StackTrace? st)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  idle,required TResult Function( XFile image)  loading,required TResult Function( XFile image,  ClassifyResult value,  List<SimilarPerson> similarPeople)  success,required TResult Function( Object error,  StackTrace? st)  error,}) {final _that = this;
 switch (_that) {
 case _ClassifyStateIdle():
 return idle();case _ClassifyStateLoading():
 return loading(_that.image);case _ClassifyStateSuccess():
-return success(_that.image,_that.value);case _ClassifyStateError():
+return success(_that.image,_that.value,_that.similarPeople);case _ClassifyStateError():
 return error(_that.error,_that.st);}
 }
 /// A variant of `when` that fallback to returning `null`
@@ -169,12 +169,12 @@ return error(_that.error,_that.st);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  idle,TResult? Function( XFile image)?  loading,TResult? Function( XFile image,  ClassifyResult value)?  success,TResult? Function( Object error,  StackTrace? st)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  idle,TResult? Function( XFile image)?  loading,TResult? Function( XFile image,  ClassifyResult value,  List<SimilarPerson> similarPeople)?  success,TResult? Function( Object error,  StackTrace? st)?  error,}) {final _that = this;
 switch (_that) {
 case _ClassifyStateIdle() when idle != null:
 return idle();case _ClassifyStateLoading() when loading != null:
 return loading(_that.image);case _ClassifyStateSuccess() when success != null:
-return success(_that.image,_that.value);case _ClassifyStateError() when error != null:
+return success(_that.image,_that.value,_that.similarPeople);case _ClassifyStateError() when error != null:
 return error(_that.error,_that.st);case _:
   return null;
 
@@ -285,11 +285,18 @@ as XFile,
 
 
 class _ClassifyStateSuccess implements ClassifyState {
-  const _ClassifyStateSuccess({required this.image, required this.value});
+  const _ClassifyStateSuccess({required this.image, required this.value, required final  List<SimilarPerson> similarPeople}): _similarPeople = similarPeople;
   
 
  final  XFile image;
  final  ClassifyResult value;
+ final  List<SimilarPerson> _similarPeople;
+ List<SimilarPerson> get similarPeople {
+  if (_similarPeople is EqualUnmodifiableListView) return _similarPeople;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_similarPeople);
+}
+
 
 /// Create a copy of ClassifyState
 /// with the given fields replaced by the non-null parameter values.
@@ -301,16 +308,16 @@ _$ClassifyStateSuccessCopyWith<_ClassifyStateSuccess> get copyWith => __$Classif
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClassifyStateSuccess&&(identical(other.image, image) || other.image == image)&&(identical(other.value, value) || other.value == value));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClassifyStateSuccess&&(identical(other.image, image) || other.image == image)&&(identical(other.value, value) || other.value == value)&&const DeepCollectionEquality().equals(other._similarPeople, _similarPeople));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,image,value);
+int get hashCode => Object.hash(runtimeType,image,value,const DeepCollectionEquality().hash(_similarPeople));
 
 @override
 String toString() {
-  return 'ClassifyState.success(image: $image, value: $value)';
+  return 'ClassifyState.success(image: $image, value: $value, similarPeople: $similarPeople)';
 }
 
 
@@ -321,7 +328,7 @@ abstract mixin class _$ClassifyStateSuccessCopyWith<$Res> implements $ClassifySt
   factory _$ClassifyStateSuccessCopyWith(_ClassifyStateSuccess value, $Res Function(_ClassifyStateSuccess) _then) = __$ClassifyStateSuccessCopyWithImpl;
 @useResult
 $Res call({
- XFile image, ClassifyResult value
+ XFile image, ClassifyResult value, List<SimilarPerson> similarPeople
 });
 
 
@@ -338,11 +345,12 @@ class __$ClassifyStateSuccessCopyWithImpl<$Res>
 
 /// Create a copy of ClassifyState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? image = null,Object? value = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? image = null,Object? value = null,Object? similarPeople = null,}) {
   return _then(_ClassifyStateSuccess(
 image: null == image ? _self.image : image // ignore: cast_nullable_to_non_nullable
 as XFile,value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
-as ClassifyResult,
+as ClassifyResult,similarPeople: null == similarPeople ? _self._similarPeople : similarPeople // ignore: cast_nullable_to_non_nullable
+as List<SimilarPerson>,
   ));
 }
 

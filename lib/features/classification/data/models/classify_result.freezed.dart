@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ClassifyResult {
 
- int get prediction;
+ double get prediction;
 /// Create a copy of ClassifyResult
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $ClassifyResultCopyWith<$Res>  {
   factory $ClassifyResultCopyWith(ClassifyResult value, $Res Function(ClassifyResult) _then) = _$ClassifyResultCopyWithImpl;
 @useResult
 $Res call({
- int prediction
+ double prediction
 });
 
 
@@ -68,7 +68,7 @@ class _$ClassifyResultCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') @override $Res call({Object? prediction = null,}) {
   return _then(_self.copyWith(
 prediction: null == prediction ? _self.prediction : prediction // ignore: cast_nullable_to_non_nullable
-as int,
+as double,
   ));
 }
 
@@ -153,7 +153,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int prediction)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double prediction)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ClassifyResult() when $default != null:
 return $default(_that.prediction);case _:
@@ -174,7 +174,7 @@ return $default(_that.prediction);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int prediction)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double prediction)  $default,) {final _that = this;
 switch (_that) {
 case _ClassifyResult():
 return $default(_that.prediction);case _:
@@ -194,7 +194,7 @@ return $default(_that.prediction);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int prediction)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double prediction)?  $default,) {final _that = this;
 switch (_that) {
 case _ClassifyResult() when $default != null:
 return $default(_that.prediction);case _:
@@ -212,7 +212,7 @@ class _ClassifyResult implements ClassifyResult {
   const _ClassifyResult({required this.prediction});
   factory _ClassifyResult.fromJson(Map<String, dynamic> json) => _$ClassifyResultFromJson(json);
 
-@override final  int prediction;
+@override final  double prediction;
 
 /// Create a copy of ClassifyResult
 /// with the given fields replaced by the non-null parameter values.
@@ -247,7 +247,7 @@ abstract mixin class _$ClassifyResultCopyWith<$Res> implements $ClassifyResultCo
   factory _$ClassifyResultCopyWith(_ClassifyResult value, $Res Function(_ClassifyResult) _then) = __$ClassifyResultCopyWithImpl;
 @override @useResult
 $Res call({
- int prediction
+ double prediction
 });
 
 
@@ -267,7 +267,7 @@ class __$ClassifyResultCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? prediction = null,}) {
   return _then(_ClassifyResult(
 prediction: null == prediction ? _self.prediction : prediction // ignore: cast_nullable_to_non_nullable
-as int,
+as double,
   ));
 }
 
