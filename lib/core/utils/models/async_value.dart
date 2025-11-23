@@ -10,10 +10,3 @@ sealed class AsyncValue<T> with _$AsyncValue<T> {
   const factory AsyncValue.error(Object error, [StackTrace? st]) =
       AsyncValueError<T>;
 }
-
-// extension AsyncValueX<T> on AsyncValue<T> {
-//   bool get isIdle => this is _Idle;
-//   bool get isLoading => this is _Loading;
-//   bool get isSuccess => this is _Success;
-//   bool get isError => this is _Error;
-// }
