@@ -35,5 +35,5 @@ dev_dependencies:
 
 flutter:
   assets:
-    - assets/
+    - assets/celebs_imgs/
   uses-material-design: true
