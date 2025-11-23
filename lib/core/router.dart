@@ -41,7 +41,6 @@ final router = GoRouter(
                     GoRoute(
                       path: 'results',
                       pageBuilder: (_, _) {
-                        // return const CupertinoPage(child: ResultsScreen());
                         return CustomTransitionPage(
                           transitionDuration: const Duration(milliseconds: 400),
                           reverseTransitionDuration: const Duration(
