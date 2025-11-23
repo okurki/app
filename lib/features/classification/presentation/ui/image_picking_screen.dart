@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:okurki_app/core/ui/platform_image.dart';
 import 'package:okurki_app/features/classification/presentation/state/classify_cubit.dart';
 import 'package:okurki_app/features/classification/presentation/state/image_picking_cubit.dart';
 
@@ -144,8 +143,8 @@ class _PictureContainer extends StatelessWidget {
                       tag: 'Penis',
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.file(
-                          File(pickedFile.path),
+                        child: PlatformImage(
+                          path: pickedFile.path,
                           key: ValueKey(pickedFile.path),
                           fit: BoxFit.cover,
                           frameBuilder: (context, child, frame, wasSync) {

@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:bloc/bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -20,7 +18,6 @@ class ClassifyCubit extends Cubit<ClassifyState> {
   @override
   void onChange(Change<ClassifyState> change) {
     super.onChange(change);
-    // print(change);
   }
 
   Future<void> debugResultsScreen() async {

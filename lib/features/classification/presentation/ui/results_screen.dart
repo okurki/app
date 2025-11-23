@@ -15,24 +15,8 @@ class ResultsScreen extends StatefulWidget {
 }
 
 class _ResultsScreenState extends State<ResultsScreen> {
-  final GlobalKey _overlayKey = GlobalKey();
-  Rect? _overlayRect;
-
   late final PageController _pageController;
   int currentPage = 0;
-
-  void measureRect() {
-    final ctx = _overlayKey.currentContext;
-    if (ctx == null) return;
-
-    final renderBox = ctx.findRenderObject() as RenderBox?;
-    if (renderBox == null) return;
-
-    final offset = renderBox.localToGlobal(Offset.zero);
-    final size = renderBox.size;
-    final rect = Rect.fromLTRB(offset.dx, offset.dy, size.width, size.height);
-    setState(() => _overlayRect = rect);
-  }
 
   @override
   void initState() {
@@ -68,11 +52,10 @@ class _ResultsScreenState extends State<ResultsScreen> {
                     controller: _pageController,
                     children: [
                       ClassifyResultScreen(imagePath: image.path, classifyResult: classifyResult),
-                      SimilarPeopleScreen(rect: _overlayRect),
+                      const SimilarPeopleScreen(),
                     ],
                   ),
                   Positioned(
-                    key: _overlayKey,
                     bottom: 32,
                     left: 0,
                     right: 0,

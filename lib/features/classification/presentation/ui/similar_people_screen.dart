@@ -6,10 +6,7 @@ import 'package:okurki_app/features/classification/data/models/similar_person.da
 import 'package:okurki_app/features/classification/presentation/state/classify_cubit.dart';
 
 class SimilarPeopleScreen extends StatefulWidget {
-  const SimilarPeopleScreen({required Rect? rect, super.key}) : _overlayRect = rect;
-
-  /// Used to position `RateGuess` on top of `NewPhoto` button.
-  final Rect? _overlayRect;
+  const SimilarPeopleScreen({super.key});
 
   @override
   State<SimilarPeopleScreen> createState() => _SimilarPeopleScreenState();

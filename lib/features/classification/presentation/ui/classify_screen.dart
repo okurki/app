@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
+import 'package:okurki_app/core/ui/platform_image.dart';
 import 'package:okurki_app/features/classification/data/models/classify_result.dart';
 
 class ClassifyResultScreen extends StatelessWidget {
@@ -67,8 +66,8 @@ class ClassifyResultScreen extends StatelessWidget {
                 aspectRatio: 5 / 6,
                 child: ClipRRect(
                   borderRadius: BorderRadiusGeometry.circular(12),
-                  child: Image.file(
-                    File(imagePath),
+                  child: PlatformImage(
+                    path: imagePath,
                     key: ValueKey(imagePath),
                     fit: BoxFit.cover,
                   ),
