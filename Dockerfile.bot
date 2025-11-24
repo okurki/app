@@ -1,0 +1,12 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY telegram_bot_example.py .
+# Copy .env if it exists, otherwise it will be ignored or handled by env vars
+# COPY .env . 
+
+CMD ["python", "telegram_bot_example.py"]

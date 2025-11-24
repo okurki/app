@@ -1,0 +1,36 @@
+# Stage 1: Build the Flutter web app
+FROM debian:latest AS build-env
+
+# Install dependencies
+RUN apt-get update && apt-get install -y curl git unzip
+
+# Define Flutter version
+ARG FLUTTER_SDK_VERSION="3.19.0"
+
+# Clone Flutter SDK
+RUN git clone https://github.com/flutter/flutter.git /usr/local/flutter
+ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PATH}"
+
+# Switch to stable channel and upgrade
+RUN flutter channel stable
+RUN flutter upgrade
+
+# Copy project files
+WORKDIR /app
+COPY . .
+
+# Build web
+RUN flutter config --enable-web
+RUN flutter pub get
+RUN flutter build web --release
+
+# Stage 2: Serve with Nginx
+FROM nginx:alpine
+
+# Copy build artifacts from the build stage
+COPY --from=build-env /app/build/web /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
