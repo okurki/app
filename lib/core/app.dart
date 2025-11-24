@@ -7,6 +7,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoApp.router(
+      debugShowCheckedModeBanner: false,
       title: 'Image Classifier',
       routerConfig: router,
     );
