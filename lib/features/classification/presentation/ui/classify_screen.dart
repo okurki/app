@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:okurki_app/core/ui/platform_image.dart';
 import 'package:okurki_app/features/classification/data/models/classify_result.dart';
+import 'package:okurki_app/telegram/telegram_web_app.dart';
 
 class ClassifyResultScreen extends StatelessWidget {
   const ClassifyResultScreen({required this.classifyResult, required this.imagePath, super.key});
@@ -111,6 +113,43 @@ class ClassifyResultScreen extends StatelessWidget {
             ),
           ),
         ),
+        if (kIsWeb) ...[
+          const SliverToBoxAdapter(child: SizedBox(height: 16)),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  CupertinoButton(
+                    color: CupertinoColors.activeGreen,
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    child: const Text('Like'),
+                    onPressed: () {
+                      TelegramWebApp.sendData({
+                        'event': 'rate_guess',
+                        'value': 'like',
+                        'prediction': classifyResult.prediction,
+                      });
+                    },
+                  ),
+                  CupertinoButton(
+                    color: CupertinoColors.destructiveRed,
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    child: const Text('Dislike'),
+                    onPressed: () {
+                      TelegramWebApp.sendData({
+                        'event': 'rate_guess',
+                        'value': 'dislike',
+                        'prediction': classifyResult.prediction,
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }
