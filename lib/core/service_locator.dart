@@ -1,5 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:injectable/injectable.dart';
+import 'package:okurki_app/core/service_locator.config.dart';
 import 'package:okurki_app/features/classification/data/repo/classification_repo_mock.dart';
 import 'package:okurki_app/features/classification/data/services/image_picker_adapter.dart';
 import 'package:okurki_app/features/classification/domain/repo/classification_repo.dart';
@@ -8,6 +10,11 @@ import 'package:okurki_app/features/classification/presentation/state/classify_c
 import 'package:okurki_app/features/classification/presentation/state/image_picking_cubit.dart';
 
 final GetIt getIt = GetIt.instance;
+
+@InjectableInit()
+void configureDependencies({String? environment}) => getIt.init(
+  environment: environment,
+);
 
 void registerDependencies() {
   registerClassifyDependencies();
