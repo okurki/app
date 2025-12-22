@@ -1,15 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:okurki_app/core/ui/platform_image.dart';
-import 'package:okurki_app/features/classification/data/models/classify_result.dart';
+import 'package:okurki_app/features/classification/domain/models/inference.dart';
 
 class ClassifyResultScreen extends StatelessWidget {
   const ClassifyResultScreen({required this.classifyResult, required this.imagePath, super.key});
 
   final String imagePath;
-  final ClassifyResult classifyResult;
+  final Inference classifyResult;
 
   String getTitle() {
-    final p = classifyResult.prediction;
+    final p = classifyResult.attractiveness;
 
     final title = switch (p) {
       > 0 && < 0.15 => 'Ugly',
@@ -25,7 +25,7 @@ class ClassifyResultScreen extends StatelessWidget {
   }
 
   String getDetailedDescription() {
-    final p = classifyResult.prediction;
+    final p = classifyResult.attractiveness;
 
     return switch (p) {
       > 0 && < 0.15 =>

@@ -41,7 +41,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
       },
       builder: (context, state) {
         return state.maybeWhen(
-          success: (image, classifyResult, _) {
+          success: (image, inference) {
             return CupertinoPageScaffold(
               child: Stack(
                 children: [
@@ -51,7 +51,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                     },
                     controller: _pageController,
                     children: [
-                      ClassifyResultScreen(imagePath: image.path, classifyResult: classifyResult),
+                      ClassifyResultScreen(imagePath: image.path, classifyResult: inference),
                       const SimilarPeopleScreen(),
                     ],
                   ),

@@ -125,12 +125,12 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  idle,TResult Function( XFile image)?  loading,TResult Function( XFile image,  ClassifyResult value,  List<SimilarPerson> similarPeople)?  success,TResult Function( Object error,  StackTrace? st)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  idle,TResult Function( XFile image)?  loading,TResult Function( XFile image,  Inference inference)?  success,TResult Function( Object error,  StackTrace? st)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ClassifyStateIdle() when idle != null:
 return idle();case _ClassifyStateLoading() when loading != null:
 return loading(_that.image);case _ClassifyStateSuccess() when success != null:
-return success(_that.image,_that.value,_that.similarPeople);case _ClassifyStateError() when error != null:
+return success(_that.image,_that.inference);case _ClassifyStateError() when error != null:
 return error(_that.error,_that.st);case _:
   return orElse();
 
@@ -149,12 +149,12 @@ return error(_that.error,_that.st);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  idle,required TResult Function( XFile image)  loading,required TResult Function( XFile image,  ClassifyResult value,  List<SimilarPerson> similarPeople)  success,required TResult Function( Object error,  StackTrace? st)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  idle,required TResult Function( XFile image)  loading,required TResult Function( XFile image,  Inference inference)  success,required TResult Function( Object error,  StackTrace? st)  error,}) {final _that = this;
 switch (_that) {
 case _ClassifyStateIdle():
 return idle();case _ClassifyStateLoading():
 return loading(_that.image);case _ClassifyStateSuccess():
-return success(_that.image,_that.value,_that.similarPeople);case _ClassifyStateError():
+return success(_that.image,_that.inference);case _ClassifyStateError():
 return error(_that.error,_that.st);}
 }
 /// A variant of `when` that fallback to returning `null`
@@ -169,12 +169,12 @@ return error(_that.error,_that.st);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  idle,TResult? Function( XFile image)?  loading,TResult? Function( XFile image,  ClassifyResult value,  List<SimilarPerson> similarPeople)?  success,TResult? Function( Object error,  StackTrace? st)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  idle,TResult? Function( XFile image)?  loading,TResult? Function( XFile image,  Inference inference)?  success,TResult? Function( Object error,  StackTrace? st)?  error,}) {final _that = this;
 switch (_that) {
 case _ClassifyStateIdle() when idle != null:
 return idle();case _ClassifyStateLoading() when loading != null:
 return loading(_that.image);case _ClassifyStateSuccess() when success != null:
-return success(_that.image,_that.value,_that.similarPeople);case _ClassifyStateError() when error != null:
+return success(_that.image,_that.inference);case _ClassifyStateError() when error != null:
 return error(_that.error,_that.st);case _:
   return null;
 
@@ -285,18 +285,11 @@ as XFile,
 
 
 class _ClassifyStateSuccess implements ClassifyState {
-  const _ClassifyStateSuccess({required this.image, required this.value, required final  List<SimilarPerson> similarPeople}): _similarPeople = similarPeople;
+  const _ClassifyStateSuccess({required this.image, required this.inference});
   
 
  final  XFile image;
- final  ClassifyResult value;
- final  List<SimilarPerson> _similarPeople;
- List<SimilarPerson> get similarPeople {
-  if (_similarPeople is EqualUnmodifiableListView) return _similarPeople;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_similarPeople);
-}
-
+ final  Inference inference;
 
 /// Create a copy of ClassifyState
 /// with the given fields replaced by the non-null parameter values.
@@ -308,16 +301,16 @@ _$ClassifyStateSuccessCopyWith<_ClassifyStateSuccess> get copyWith => __$Classif
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClassifyStateSuccess&&(identical(other.image, image) || other.image == image)&&(identical(other.value, value) || other.value == value)&&const DeepCollectionEquality().equals(other._similarPeople, _similarPeople));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ClassifyStateSuccess&&(identical(other.image, image) || other.image == image)&&(identical(other.inference, inference) || other.inference == inference));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,image,value,const DeepCollectionEquality().hash(_similarPeople));
+int get hashCode => Object.hash(runtimeType,image,inference);
 
 @override
 String toString() {
-  return 'ClassifyState.success(image: $image, value: $value, similarPeople: $similarPeople)';
+  return 'ClassifyState.success(image: $image, inference: $inference)';
 }
 
 
@@ -328,11 +321,11 @@ abstract mixin class _$ClassifyStateSuccessCopyWith<$Res> implements $ClassifySt
   factory _$ClassifyStateSuccessCopyWith(_ClassifyStateSuccess value, $Res Function(_ClassifyStateSuccess) _then) = __$ClassifyStateSuccessCopyWithImpl;
 @useResult
 $Res call({
- XFile image, ClassifyResult value, List<SimilarPerson> similarPeople
+ XFile image, Inference inference
 });
 
 
-$ClassifyResultCopyWith<$Res> get value;
+$InferenceCopyWith<$Res> get inference;
 
 }
 /// @nodoc
@@ -345,12 +338,11 @@ class __$ClassifyStateSuccessCopyWithImpl<$Res>
 
 /// Create a copy of ClassifyState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? image = null,Object? value = null,Object? similarPeople = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? image = null,Object? inference = null,}) {
   return _then(_ClassifyStateSuccess(
 image: null == image ? _self.image : image // ignore: cast_nullable_to_non_nullable
-as XFile,value: null == value ? _self.value : value // ignore: cast_nullable_to_non_nullable
-as ClassifyResult,similarPeople: null == similarPeople ? _self._similarPeople : similarPeople // ignore: cast_nullable_to_non_nullable
-as List<SimilarPerson>,
+as XFile,inference: null == inference ? _self.inference : inference // ignore: cast_nullable_to_non_nullable
+as Inference,
   ));
 }
 
@@ -358,10 +350,10 @@ as List<SimilarPerson>,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$ClassifyResultCopyWith<$Res> get value {
+$InferenceCopyWith<$Res> get inference {
   
-  return $ClassifyResultCopyWith<$Res>(_self.value, (value) {
-    return _then(_self.copyWith(value: value));
+  return $InferenceCopyWith<$Res>(_self.inference, (value) {
+    return _then(_self.copyWith(inference: value));
   });
 }
 }

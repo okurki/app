@@ -1,15 +1,17 @@
+import 'dart:math';
+
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-
-import 'package:okurki_app/features/classification/data/models/classify_result.dart';
+import 'package:injectable/injectable.dart';
 import 'package:okurki_app/features/classification/data/models/similar_person.dart';
+import 'package:okurki_app/features/classification/domain/models/inference.dart';
 import 'package:okurki_app/features/classification/domain/repo/classification_repo.dart';
 
+@Singleton(as: ClassificationRepo, env: [Environment.test])
 class ClassificationRepoMock implements ClassificationRepo {
   @override
-  Future<(ClassifyResult, List<SimilarPerson>)> classify(XFile image) async {
+  Future<Inference> classify(XFile image) async {
     await Future<void>.delayed(const Duration(milliseconds: 1300));
-    final json = {'prediction': 0.81};
 
     final similar = <SimilarPerson>[];
     const celebs = [
@@ -30,6 +32,20 @@ class ClassificationRepoMock implements ClassificationRepo {
       similar.add(person);
     }
 
-    return (ClassifyResult.fromJson(json), similar);
+    final rand = Random();
+
+    return Inference(
+      id: rand.nextInt(1e6.toInt()),
+      userId: rand.nextInt(1e6.toInt()),
+      celebrities: [Celebrity(id: rand.nextInt(1e6.toInt()), name: 'Penis Penisovich', imgPath: 'some_path.img')],
+      attractiveness: 0.71,
+      timestamp: DateTime.now(),
+    );
+  }
+  
+  @override
+  Future<void> rateCelebrity({required int inferenceID, required int celebrityID, required bool isValid}) {
+    // TODO: implement rateCelebrity
+    throw UnimplementedError();
   }
 }

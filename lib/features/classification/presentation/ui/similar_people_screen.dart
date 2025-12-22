@@ -2,7 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:okurki_app/features/classification/data/models/similar_person.dart';
+import 'package:okurki_app/core/constants/constants.dart';
+import 'package:okurki_app/features/classification/domain/models/inference.dart';
 import 'package:okurki_app/features/classification/presentation/state/classify_cubit.dart';
 
 class SimilarPeopleScreen extends StatefulWidget {
@@ -29,10 +30,10 @@ class _SimilarPeopleScreenState extends State<SimilarPeopleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocSelector<ClassifyCubit, ClassifyState, List<SimilarPerson>>(
+    return BlocSelector<ClassifyCubit, ClassifyState, List<Celebrity>>(
       selector: (state) {
         return state.maybeMap(
-          success: (value) => value.similarPeople,
+          success: (value) => value.inference.celebrities,
           orElse: () => const [],
         );
       },
@@ -63,14 +64,13 @@ class _SimilarPeopleScreenState extends State<SimilarPeopleScreen> {
 class SimilarPersonPage extends StatefulWidget {
   const SimilarPersonPage({required this.celebData, super.key});
 
-  final SimilarPerson celebData;
+  final Celebrity celebData;
 
   @override
   State<SimilarPersonPage> createState() => _SimilarPersonPageState();
 }
 
 class _SimilarPersonPageState extends State<SimilarPersonPage> {
-  bool shouldBeRated = Random().nextBool();
   bool isRated = false;
 
   List<Widget> rateWidgets() {
@@ -90,6 +90,7 @@ class _SimilarPersonPageState extends State<SimilarPersonPage> {
             onPressed: () {
               setState(() {
                 isRated = true;
+                context.read<ClassifyCubit>().giveFeedback(celebrityID: widget.celebData.id, isValid: true).ignore();
               });
             },
           ),
@@ -100,6 +101,7 @@ class _SimilarPersonPageState extends State<SimilarPersonPage> {
             onPressed: () {
               setState(() {
                 isRated = true;
+                context.read<ClassifyCubit>().giveFeedback(celebrityID: widget.celebData.id, isValid: false).ignore();
               });
             },
           ),
@@ -124,8 +126,14 @@ class _SimilarPersonPageState extends State<SimilarPersonPage> {
     return Stack(
       fit: .expand,
       children: [
-        Image.memory(
-          widget.celebData.imgBytes,
+        // CachedNetworkImage(
+        //   imageUrl: '$baseURL${widget.celebData.imgPath}',
+        //   fit: BoxFit.cover,
+        //   placeholder: (context, _) => const CupertinoActivityIndicator(),
+        //   errorWidget: (context, _, _) => const Icon(CupertinoIcons.exclamationmark_triangle),
+        // )
+        Image.network(
+          '$baseURL${widget.celebData.imgPath}',
           fit: .cover,
         ),
         Positioned(
@@ -153,16 +161,13 @@ class _SimilarPersonPageState extends State<SimilarPersonPage> {
                     ),
                   ),
                 ),
-                if (shouldBeRated)
-                  Container(
-                    padding: const .symmetric(horizontal: 16),
-                    child: Column(
-                      crossAxisAlignment: .start,
-                      children: isRated ? thanksForRateWidgets() : rateWidgets(),
-                    ),
-                  )
-                else
-                  const SizedBox.shrink(),
+                Container(
+                  padding: const .symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: .start,
+                    children: isRated ? thanksForRateWidgets() : rateWidgets(),
+                  ),
+                ),
               ],
             ),
           ),

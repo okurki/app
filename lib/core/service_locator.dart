@@ -2,9 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
 import 'package:okurki_app/core/service_locator.config.dart';
-import 'package:okurki_app/features/classification/data/repo/classification_repo_mock.dart';
 import 'package:okurki_app/features/classification/data/services/image_picker_adapter.dart';
-import 'package:okurki_app/features/classification/domain/repo/classification_repo.dart';
 import 'package:okurki_app/features/classification/domain/repo/image_picker_repo.dart';
 import 'package:okurki_app/features/classification/presentation/state/classify_cubit.dart';
 import 'package:okurki_app/features/classification/presentation/state/image_picking_cubit.dart';
@@ -16,14 +14,14 @@ void configureDependencies({String? environment}) => getIt.init(
   environment: environment,
 );
 
-void registerDependencies() {
+void registerDependencies([String? env]) {
   registerClassifyDependencies();
+  configureDependencies(environment: env);
 }
 
 void registerClassifyDependencies() {
   getIt
     ..registerLazySingleton<ImagePicker>(ImagePicker.new)
-    ..registerLazySingleton<ClassificationRepo>(ClassificationRepoMock.new)
     ..registerLazySingleton<ImagePickerRepo>(
       () => ImagePickerAdapter(ImagePicker()),
     )

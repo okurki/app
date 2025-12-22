@@ -281,7 +281,7 @@ class _ActionButtons extends StatelessWidget {
                     color: CupertinoColors.white,
                   ),
                 ),
-                success: (image, value, _) {
+                success: (image, inference) { 
                   // This trick allows smooth animation for hero.
                   return Hero(
                     tag: 'Pizda',

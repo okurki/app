@@ -8,8 +8,7 @@ sealed class ClassifyState with _$ClassifyState {
   }) = _ClassifyStateLoading;
   const factory ClassifyState.success({
     required XFile image,
-    required ClassifyResult value,
-    required List<SimilarPerson> similarPeople,
+    required Inference inference,
   }) = _ClassifyStateSuccess;
   const factory ClassifyState.error(
     Object error, [
