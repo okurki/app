@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
-import 'package:image_picker/image_picker.dart';
+// import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
 import 'package:okurki_app/core/app.dart';
 import 'package:okurki_app/core/service_locator.dart';
-import 'package:okurki_app/features/classification/domain/repo/classification_repo.dart';
+// import 'package:okurki_app/features/classification/domain/repo/classification_repo.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
