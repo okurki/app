@@ -129,7 +129,7 @@ class ClassifyResultScreen extends StatelessWidget {
                       TelegramWebApp.sendData({
                         'event': 'rate_guess',
                         'value': 'like',
-                        'prediction': classifyResult.prediction,
+                        'prediction': classifyResult.attractiveness,
                       });
                     },
                   ),
@@ -141,7 +141,7 @@ class ClassifyResultScreen extends StatelessWidget {
                       TelegramWebApp.sendData({
                         'event': 'rate_guess',
                         'value': 'dislike',
-                        'prediction': classifyResult.prediction,
+                        'prediction': classifyResult.attractiveness,
                       });
                     },
                   ),
