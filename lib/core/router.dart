@@ -15,6 +15,12 @@ final router = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: '/rate',
   observers: [HeroController()],
+  redirect: (context, state) {
+    if (state.uri.toString() == '/') {
+      return '/rate';
+    }
+    return state.uri.toString();
+  },
   routes: [
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
