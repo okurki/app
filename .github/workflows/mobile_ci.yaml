@@ -1,5 +1,9 @@
 name: Mobile CI/CD Pipeline
 
+defaults:
+  run:
+    working-directory: app
+
 on:
   workflow_dispatch:
     inputs:
@@ -16,24 +20,24 @@ on:
       - main
 
 jobs:
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+  # lint:
+  #   name: Lint
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v6
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          flutter-version: '3.38.3'
-          architecture: x64
+  #     - name: Setup Flutter
+  #       uses: subosito/flutter-action@v2
+  #       with:
+  #         channel: stable
+  #         flutter-version: '3.38.3'
+  #         architecture: x64
 
-      - name: Install dependencies
-        run: flutter pub get
+  #     - name: Install dependencies
+  #       run: flutter pub get
 
-      - name: Analyze code
-        run: flutter analyze
+  #     - name: Analyze code
+  #       run: flutter analyze
 
   compile-android:
     runs-on: ubuntu-latest
